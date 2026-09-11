@@ -262,6 +262,7 @@ class Validator:
                 ## new window (via fix()'s first_obs/last_obs) at zero optimization cost.
                 if i % update_frequency == 0:
                     _start_params = _fit.params if _fit is not None else None
+                    _start_params = None
 
                     _fit = md.fit(first_obs=i, last_obs=window_size + i,
                                   starting_values=_start_params, disp=False)
