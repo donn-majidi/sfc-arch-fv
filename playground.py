@@ -30,7 +30,7 @@ azioni= spx.columns
 r = re.compile('.*morgan', flags=re.I)
 list(filter(r.match, azioni))
 
-stx = spx['JP MORGAN CHASE & CO.']
+stx = spx['CISCO SYSTEMS']
 #rs = np.log(stx).diff().dropna() * 100
 rs = stx.pct_change().dropna() * 100
 
