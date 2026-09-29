@@ -45,13 +45,14 @@ class Validator:
         window, one column per model. Always 'origin' aligned. ``None``
         until ``validate()`` is called.
     model_fits : np.ndarray
-        Object array holding, for each model, the fitted ``ARCHModelResult``
-        from the last rolling window only. ``None`` until ``validate()`` is
-        called. If ``update_frequency`` was passed to ``validate()`` and the
-        last window was not a re-estimation window, this holds the
-        ``ARCHModelFixedResult`` produced by ``fix()`` for that window
-        instead (same parameters as the last actual fit, just re-anchored to
-        the final window).
+        Object array holding, for each model, the ``ARCHModelResult`` from
+        its last genuinely re-estimated (``fit()``) rolling window. ``None``
+        until ``validate()`` is called. If ``update_frequency`` was passed to
+        ``validate()``, this is not necessarily the last window overall —
+        windows in between re-estimations are re-anchored via ``fix()``
+        (which returns an ``ARCHModelFixedResult`` with no standard errors or
+        convergence info) and are skipped when populating this attribute, so
+        ``model_fits`` always holds a real, fully-estimated fit.
     mse_loss : pd.DataFrame
         Squared-error loss series, (forecast - endog^2)^2, per model.
         ``None`` until ``validate()`` is called.
@@ -252,6 +253,7 @@ class Validator:
         for j, md in enumerate(models):
             _method = 'analytic'
             _fit = None
+            _last_fitted = None
             _warned_convergence = False
 
             for i in range(eff_range):
@@ -283,6 +285,12 @@ class Validator:
                             _warned_convergence = True
                         _fit = md.fit(first_obs=i, last_obs=window_size + i,
                                       starting_values=None, options={'maxiter': 500}, disp=False)
+
+                    ## Keep track of the last genuinely re-estimated (ARCHModelResult) fit
+                    ## separately from _fit, since _fit itself may be overwritten by a
+                    ## fix()-produced ARCHModelFixedResult (no standard errors, no
+                    ## convergence info) on a later, non-refit window.
+                    _last_fitted = _fit
                 else:
                     _fit = md.fix(params=_fit.params, first_obs=i, last_obs=window_size + i)
 
@@ -324,8 +332,11 @@ class Validator:
                         value_at_risk[i,j,k] = _var
                         expected_shortfall[i,j,k] = _es
                 
-            ## Save the fitted model at the last iteration
-            model_fits.append(_fit)
+            ## Save the last genuinely re-estimated fit, not whichever of _fit/_last_fitted
+            ## happened to be current at the loop's last iteration (which, with
+            ## update_frequency > 1, may be a fix()-produced ARCHModelFixedResult carrying
+            ## no standard errors/convergence info if the last window wasn't a refit window).
+            model_fits.append(_last_fitted)
             
         self.forecasts = forecasts
         self.std_residuals = std_residuals
