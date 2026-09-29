@@ -27,18 +27,20 @@ spx = spx.astype(dtype=float)
 import re
 azioni= spx.columns
 
-r = re.compile('.*morgan', flags=re.I)
+r = re.compile('.*cisco', flags=re.I)
 list(filter(r.match, azioni))
 
 stx = spx['CISCO SYSTEMS']
-#rs = np.log(stx).diff().dropna() * 100
-rs = stx.pct_change().dropna() * 100
+#stx = spx['APPLE']
+rs = np.log(stx).diff().dropna() * 100
+#rs = stx.pct_change().dropna() * 100
 
 ## Drop all rows where returns are 0
 rs = rs[rs!=0]
 
-start_date = '2016-03-01'
-rs = rs.loc[start_date:]
+start_date = '2000-03-01'
+end_date = '2010-03-01'
+rs = rs.loc[start_date:end_date]
 
 ## Import the desired Mean Model, Volatility Processes and Distributions from arch
 from arch.univariate import ZeroMean
@@ -94,11 +96,11 @@ dists = [dist_normal, dist_studst, dist_skewt]
 #### of vol processes and distributions
 from itertools import product
 
-proc_combs = set(product(vol_processes, dists))
+proc_combs = list(product(dists, vol_processes))
 
 #### Create all model instances
 models = []
-for _vol, _dist in proc_combs:
+for _dist, _vol in proc_combs:
     _mod = ZeroMean(y=rs, volatility=_vol, distribution=_dist)
     models.append(_mod)
 
@@ -132,6 +134,15 @@ md_qlike = model_validator.qlike_loss.copy(deep=True)
 md_var = model_validator.value_at_risk.copy(deep=True)
 md_exp = model_validator.expected_shortfall.copy(deep=True)
 
+## Forecasts of horizons greater than 1 are not available for some mdoels,
+## hence they will be dropped
+md_forecasts.dropna(axis = 1, inplace=True)
+md_residuals.dropna(axis = 1, inplace=True)
+md_mse.dropna(axis = 1, inplace=True)
+md_qlike.dropna(axis = 1, inplace=True)
+md_var.dropna(axis = 1, inplace=True)
+md_exp.dropna(axis = 1, inplace=True)
+
 ## Align the indices of the test set and the forecasts for data visualization
 rs_test = rs.loc[md_forecasts.index]
 
@@ -142,6 +153,7 @@ ax.plot(np.sqrt(md_forecasts), alpha=0.8)
 ax.plot(-1*np.sqrt(md_forecasts), alpha=0.8)
 ax.legend()
 ax.set_title('Returns vs. Forecasted Volatility Envelopes')
+plt.show()
 
 #### StepM and MCS Comparison Porcedures
 '''
@@ -168,23 +180,61 @@ bm = next(
     md for md in models
     if md.volatility == vol_GARCH_1 and md.distribution == dist_normal
     )
-bm_index = np.where(models == bm)[0][0]
+bm_indx = np.where(models == bm)[0][0]
 
-bm_losses = md_qlike.loc[:, bm_index]
-alt_losses = md_qlike.loc[:, md_qlike.columns != bm_index]
+bm_losses = md_qlike.loc[:, bm_indx]
+alt_losses = md_qlike.loc[:, md_qlike.columns != bm_indx]
 
 from arch.bootstrap import StepM
-stepm = StepM(benchmark=bm_losses, models=alt_losses, size=0.05, reps=10000,
+stepm = StepM(benchmark=bm_losses, models=alt_losses, size=0.05, reps=1000,
               block_size=opt_sb, bootstrap='stationary', seed=1776)
 stepm.compute()
 
 ######## MCS
 from arch.bootstrap import MCS
-mcs = MCS(losses=md_qlike, size=0.05, reps=10000,
+mcs = MCS(losses=md_qlike, size=0.05, reps=1000,
           block_size=opt_sb, bootstrap='stationary', seed = 1776)
 mcs.compute()
 
 ######## Visualizations
+
+#### Loss densities
+## First group models based on their likelihood functions and ravel the loss arrays
+## The first 20 are the ones with the Gaussian likelihood function
+## The second 20 the ones with the Students-T likelihood function
+## The final 20 the ones with the Skew Studnets-T likelihood function
+
+ravel_qlike_gu = md_qlike.iloc[:,:20].to_numpy().ravel()
+ravel_qlike_st = md_qlike.iloc[:,20:40].to_numpy().ravel()
+ravel_qlike_sk = md_qlike.iloc[:,-20:].to_numpy().ravel()
+
+## Only keep losses up to the 95th quantile, this is convenient for visual inspection
+ravel_qlike_gu = ravel_qlike_gu[ravel_qlike_gu < np.quantile(ravel_qlike_gu, 0.95)]
+ravel_qlike_st = ravel_qlike_st[ravel_qlike_st < np.quantile(ravel_qlike_st, 0.95)]
+ravel_qlike_sk = ravel_qlike_sk[ravel_qlike_sk < np.quantile(ravel_qlike_sk, 0.95)]
+
+## Compute the mean qlike loss for Benchmark and the min qlike model
+bm_qlike = md_qlike.loc[:, bm_indx].mean()
+min_qlike = md_qlike.mean().min()
+
+## Find the corresponding model with minimum qlike score
+min_qlike_indx = md_qlike.mean()[md_qlike.mean() == min_qlike].index[0]
+min_qlike_vol = str(models[min_qlike_indx].volatility)
+min_qlike_dist = str(models[min_qlike_indx].distribution)
+min_qlike_model = min_qlike_vol + ' -- ' + min_qlike_dist
+
+## Do the same for the Benchmark
+bm_model = str(models[bm_indx].volatility) + ' -- ' + str(models[bm_indx].distribution)
+
+## Plot KDE plost of model losses
+sns.kdeplot(ravel_qlike_gu, label='Gaussian', fill=True)
+sns.kdeplot(ravel_qlike_st, label='Student T', fill=True)
+sns.kdeplot(ravel_qlike_sk, label='Skew Student T', fill=True)
+plt.axvline(bm_qlike, label=bm_model + ' Benchamrk Model', color='black', linestyle='dashed')
+plt.axvline(min_qlike, label=min_qlike_model + ' Minimum QLIKE Model', linestyle='dotted')
+plt.legend()
+plt.show()
+
 avg_qlike = pd.DataFrame(md_qlike.mean(), columns=["Average loss"])
 fig = avg_qlike.plot(style=['o'])
 fig.set_xlabel('Model Number')
@@ -198,7 +248,7 @@ stepm_models.loc[sup, "Same or worse"] = np.nan
 stepm_models.loc[worse, "Superior"] = np.nan
 stepm_models.loc[:, "Benchmark"] = np.nan
 ## Add benchmark back to the data frame
-stepm_models.loc[bm_index, "Benchmark"] = bm_losses.mean()
+stepm_models.loc[bm_indx, "Benchmark"] = bm_losses.mean()
 fig = stepm_models.plot(style=["o", "s", "*"])
 fig.set_xlabel('Model Number')
 fig.set_ylabel('QLIKE Score')
