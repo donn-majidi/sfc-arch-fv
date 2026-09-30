@@ -289,7 +289,7 @@ for i in range(len(models)):
     xi_hat = gp_fit.params[0]
     sigma_hat = gp_fit.params[1]
 
-    if xi_hat < 0:
+    if xi_hat < -0.5:
         tail_indx[i,0] = np.round(xi_hat, decimals=2)
         tail_indx[i,1] = np.nan
         tail_indx[i,2] = np.nan
