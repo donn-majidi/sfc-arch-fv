@@ -278,8 +278,8 @@ moment_conditions = pd.DataFrame(moment_conditions, columns=mcols)
 print(moment_conditions)
 
 #### Pickands' Tail Index Estimator
-from src.modules.standard_diagnostics import GenParetoMLE, tail_index_test
-tail_indx = np.zeros(shape=(len(models), 2))
+from src.modules.standard_diagnostics import GenParetoMLE, tail_index_ci
+tail_indx = np.zeros(shape=(len(models), 3))
 for i in range(len(models)):
     zs = md_residuals[i]
     thresh = np.percentile(zs, 95)
@@ -288,24 +288,28 @@ for i in range(len(models)):
     gp_fit = gp.fit()
     xi_hat = gp_fit.params[0]
     sigma_hat = gp_fit.params[1]
-    
+
     if xi_hat < 0:
         tail_indx[i,0] = np.round(xi_hat, decimals=2)
-        tail_indx[i,1] = -1
+        tail_indx[i,1] = np.nan
+        tail_indx[i,2] = np.nan
         continue
-    r = max(np.ceil(1/xi_hat), 4)
-    tail_indx[i,0] = r
-    
-    _test = tail_index_test(exs, r, xi_hat, sigma_hat)
-    pvalue = _test['P-value']
-    if pvalue > test_size:
-        tail_indx[i,1] = 1
-    else:
-        tail_indx[i,1] = 0
 
-tcols = ['Tail Index', 'Tail Index Test']
+    _ci = tail_index_ci(exs, xi_hat, sigma_hat, alpha=test_size)
+    tail_indx[i,0] = _ci['xi_hat']
+    tail_indx[i,1] = _ci['CI Lower']
+    tail_indx[i,2] = _ci['CI Upper']
+
+tcols = ['Tail Index', 'CI Lower', 'CI Upper']
 tail_indx = pd.DataFrame(tail_indx, columns=tcols)
 print(tail_indx)
+
+## Visualize the tail index estimates and the corresponding confidence intervals
+fig, ax = plt.subplots()
+yerr = [tail_indx['Tail Index'] - tail_indx['CI Lower'],
+        tail_indx['CI Upper'] - tail_indx['Tail Index']]
+ax.errorbar(x=range(len(tail_indx)), y=tail_indx['Tail Index'], yerr=yerr, fmt='o', capsize=3)
+plt.show()
 
 #### Jarque-Bera Test
 ## This test can only be carried out for specifications with Normal distribution
