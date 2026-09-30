@@ -285,27 +285,27 @@ class GenParetoMLE(GenericLikelihoodModel):
     exog_names = ['xi_hat', 'sigma_hat']
     
 
-def tail_index_test(z: np.ndarray, moment_order: float, xi_hat: float, sigma_hat: float,
+def tail_index_ci(z: np.ndarray, xi_hat: float, sigma_hat: float, alpha: float | None = 0.05,
               bandwidth: int | None = 10, trim_quantile: float | None = 0.99,
               ax: plt.Axes | None = None):
         '''
-        Tests whether the moment condition of a specified order holds for the
-        estimated tail index, via the asymptotic normality of the GPD shape MLE.
+        Confidence interval for the estimated tail index (GPD shape
+        parameter), via the asymptotic normality of its MLE.
 
         Parameters
         ----------
         z : np.ndarray
             Centered exceedances (the same series used to fit ``GenParetoMLE``).
             Must be 1-dimensional.
-        moment_order : float
-            Moment order r being tested; implies the hypothesized shape
-            xi = 1/r under the null. Must be strictly positive.
         xi_hat : float
             MLE-estimated GPD shape parameter (e.g. from
             ``GenParetoMLE(z).fit()``). Must satisfy the Fisher regularity
             condition ``xi_hat >= -0.5``.
         sigma_hat : float
             MLE-estimated GPD scale parameter, used only for the density plot.
+        alpha : float | None, optional
+            Significance level for the confidence interval (e.g. 0.05 for a
+            95% CI). Must be strictly between 0 and 1. The default is 0.05.
         bandwidth : int | None, optional
             Number of histogram bins for the empirical density plot. The
             default is 10.
@@ -321,8 +321,7 @@ def tail_index_test(z: np.ndarray, moment_order: float, xi_hat: float, sigma_hat
         Raises
         ------
         ValueError
-            If ``moment_order`` is not strictly positive, or ``trim_quantile``
-            is not in (0, 1).
+            If ``alpha`` or ``trim_quantile`` is not strictly between 0 and 1.
         Exception
             If ``xi_hat`` is less than -0.5, violating the Fisher regularity
             condition required for the asymptotic normality result below.
@@ -330,8 +329,8 @@ def tail_index_test(z: np.ndarray, moment_order: float, xi_hat: float, sigma_hat
         Returns
         -------
         dict
-            Dictionary with keys ``'Test Statistic'`` (the w statistic),
-            ``'Critical Value'`` (the normal CDF at w), and ``'P-value'``.
+            Dictionary with keys ``'xi_hat'``, ``'Std Error'``,
+            ``'CI Lower'``, and ``'CI Upper'``.
 
         References
         ----------
@@ -340,40 +339,42 @@ def tail_index_test(z: np.ndarray, moment_order: float, xi_hat: float, sigma_hat
         '''
 
         z = array_like(z, 'z', ndim=1)
-        moment_order = float_like(moment_order, 'moment_order')
         xi_hat = float_like(xi_hat, 'xi_hat')
         sigma_hat = float_like(sigma_hat, 'sigma_hat')
+        alpha = float_like(alpha, 'alpha')
         bandwidth = int_like(bandwidth, 'bandwidth', optional=True) # Kernel bandwidth for computing the histogram of the exceedances
         trim_quantile = float_like(trim_quantile, 'trim_quantile') # Quantile of z used as the plot's x-axis cutoff
 
-        if moment_order <= 0:
-            raise ValueError('Moment order must be strictly positive.')
+        if alpha <= 0 or alpha >= 1:
+            raise ValueError('alpha has to be strictly between 0 and 1.')
 
         if trim_quantile <= 0 or trim_quantile > 1:
             raise ValueError('trim_quantile has to be strictly between 0 and 1.')
-            
+
         if xi_hat < -0.5:
             raise Exception('The value of the estimated shape parameter is less than -0.5. '
-                            'This violates the Fisher regularity conditions. Cannot run the test.')
-                    
+                            'This violates the Fisher regularity conditions. Cannot compute '
+                            'the confidence interval.')
+
         '''
-        The asymptotic distribution of the shape parameter xi_hat minus its hypothesized value
-        xi = 1/r, where r is the moment order being tested is normal with variance (1+xi)^2:
-            
+        The asymptotic distribution of the shape parameter MLE is normal with
+        variance (1+xi)^2:
+
                         sqrt(m) * (xi_hat - xi) ~ N(0,(1+xi)^2),
-        
+
         where m is the number of exceedances, ovvero the size of the series passed to the function.
-        This motivates the test statistic:
-            
-                        w = sqrt(m) * (xi_hat - xi) / (1+xi) ~ N(0,1)
+        Plugging in xi_hat for the unknown xi in the variance (the standard Wald approach)
+        gives the asymptotic standard error of xi_hat, from which a (1-alpha) confidence
+        interval for the tail index follows directly:
+
+                        xi_hat +/- z_{1-alpha/2} * (1+xi_hat) / sqrt(m)
         '''
         nexcess = z.shape[0]
-        xi = 1 / moment_order
-        w = np.sqrt(nexcess) * (xi_hat - xi) / (1+xi)
-        
-        critvalue = _norm.cdf(w)
-        pvalue = float(np.clip(1 - critvalue, 0.0, 1.0))
-        
+        std_err = (1 + xi_hat) / np.sqrt(nexcess)
+        z_crit = _norm.ppf(1 - alpha / 2)
+        ci_lower = xi_hat - z_crit * std_err
+        ci_upper = xi_hat + z_crit * std_err
+
         if ax is not None:
             ## Cap the displayed range at a high empirical quantile of z rather than
             ## z.max(), since extreme exceedances are rare and let a single outlier
@@ -395,10 +396,11 @@ def tail_index_test(z: np.ndarray, moment_order: float, xi_hat: float, sigma_hat
             ax.set_xlim(0, cutoff)
             ax.legend()
             ax.set_title('Empirical Density vs. Generalized Pareto Density')
-        
-        return {'Test Statistic': w,
-                'Critical Value': critvalue,
-                'P-value': pvalue}    
+
+        return {'xi_hat': xi_hat,
+                'Std Error': std_err,
+                'CI Lower': ci_lower,
+                'CI Upper': ci_upper}
 
 ## Test di Jarque-Bera
 def jb_test(z: np.ndarray):
