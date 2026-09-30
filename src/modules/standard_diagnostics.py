@@ -284,8 +284,8 @@ class GenParetoMLE(GenericLikelihoodModel):
     ## Set paramter names for model output
     exog_names = ['xi_hat', 'sigma_hat']
     
-    
-def hill_test(z: np.ndarray, moment_order: float, xi_hat: float, sigma_hat: float,
+
+def tail_index_test(z: np.ndarray, moment_order: float, xi_hat: float, sigma_hat: float,
               bandwidth: int | None = 10, trim_quantile: float | None = 0.99,
               ax: plt.Axes | None = None):
         '''
