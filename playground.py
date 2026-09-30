@@ -283,8 +283,8 @@ mcols = [mcol_str.format(i) for i in moments]
 moment_conditions = pd.DataFrame(moment_conditions, columns=mcols)
 print(moment_conditions)
 
-#### Hill's Tail Index Estimator
-from src.modules.standard_diagnostics import GenParetoMLE, hill_test
+#### Pickands' Tail Index Estimator
+from src.modules.standard_diagnostics import GenParetoMLE, tail_index_test
 tail_indx = np.zeros(shape=(len(models), 2))
 for i in range(len(models)):
     zs = md_residuals[i]
@@ -302,14 +302,14 @@ for i in range(len(models)):
     r = max(np.ceil(1/xi_hat), 4)
     tail_indx[i,0] = r
     
-    _test = hill_test(exs, r, xi_hat, sigma_hat)
+    _test = tail_index_test(exs, r, xi_hat, sigma_hat)
     pvalue = _test['P-value']
     if pvalue > test_size:
         tail_indx[i,1] = 1
     else:
         tail_indx[i,1] = 0
 
-tcols = ['Tail Index', 'Hill Test']
+tcols = ['Tail Index', 'Tail Index Test']
 tail_indx = pd.DataFrame(tail_indx, columns=tcols)
 print(tail_indx)
 
