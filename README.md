@@ -281,37 +281,46 @@ xi_hat = gp.params[0]
 sigma_hat = gp.params[1]
 ```
 
-### `hill_test`
-This function is a generalization of the test for the heavy-tailedness via the Hill estimator. The asymptotic distribution of the shape parameter estimator $\hat{xi}$ minus its hypothesized value $\xi = 1/r$, where $r$ is the moment order being tested is normal with variance $(1+\xi)^2$:
+### `tail_index_ci`
+This function computes the standard error of the estimated tail index and the corresponding confidence intervals at given percentiles. The MLE of the shape parameter $\hat{\xi}$ is asymptotically normally distributed as:
 ```math
-                        \sqrt(m)  (\hat{\xi} - \xi) \sim \mathcal{N}(0,(1+\xi)^2),
-```        
-where $m$ is the number of exceedances, ovvero the size of the series passed to the function. This motivates the test statistic:
-```math
-                 w = \sqrt(m)  (\hat{\xi} - \xi) / (1+\xi) \sim \mathcal{N}(0,1)
+                        \sqrt{m} (\hat{\xi} - \xi_0) \sim \mathcal{N}(0, (1+\xi_0)^2), 
 ```
+where $m$ is the number of extreme observations, i.e., the size of the series passed to the function, and $\xi_0$ is the hypothesized value of the tail index. Using the definition above, the standard error of the tail index estimator can be computed as:
+```math
+                      \hat{\nu} = \frac{ 1 + \hat{\xi} }{\sqrt{m}}.
+```
+Hence the confidence intervals at significance level $\alpha$ are computed as:
+```math
+                    CI = \left[  -\Phi^{-1}(1-\alpha) \hat{\nu} \, , \, +\Phi^{-1}(1-\alpha) \hat{\nu}  \right].
+```
+Trivially, moments of order $r$ and lower exist if and only if $r < 1/\xi_0$.
+
+>[!NOTE]
+>The maximum likelihood estimator is asymptotically normal only in the region $\xi \in (-0.5,\infty)$. For values of the estimated tail index less than -0.5 the MLE is no longer asymptotically normal, and thus confidence bands cannot be computed.
+
 Parameters:
 - `z`: Univariate array of centered exceedances above threshold. Must be the same array fed to GenParetoMLE.
-- `moment_order`: Moment order being tested.
 - `xi_hat`: MLE estimate of the shape parameter.
 - `sigma_hat`: MLE estimate of the scale parameter.
+- `alpha`: Significance level for the confidence interval (e.g. 0.05 for a 95% CI). Must be strictly between 0 and 1. The default is 0.05.
 - `bandwidth`: Optional. Number of bins to plot the histogram.
 - `trim_quantile`: Optional | Default = 0.99. The cut-off quantile on the plot. By trimming the extreme values makes the plot tidier.
 - `ax: Optional`: plt.Axes canvas on which to plot the empirical pdf of the input data along with the theoretical pdf of the Generalized Pareto Distribution with given shape and scale parameters.
 
 Returns:
 - `dict()` containing:
-  - test statistic
-  - critical value
-  - p-value of the test
+  - xi_hat
+  - Std Error
+  - CI Lower
+  - CI Upper
 ```python
-from src.modules.standard_diagnostics import hill_test
+from src.modules.standard_diagnostics import tail_index_ci
 
-## Hill's test
-r = 4 ## Moment order being tested
+## Pickands tail index estimator
 fig, ax = plt.subplots()
-hill_results = hill_test(ex_0, moment_order = r, xi_hat = xi_hat, sigma_hat = sigma_hat, ax=ax)
-print(hill_results)
+tail_indx = tail_index_ci(ex_0, xi_hat = xi_hat, sigma_hat = sigma_hat, alpha = 0.05, ax=ax)
+print(tail_indx)
 plt.show()
 ```
 ### `jb_test`
