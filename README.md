@@ -13,6 +13,7 @@ Forecast-Validation for optimal ARCH/GARCH model selection in Python
 - [License](#license)
 
 ## Overview
+This repository develops a forecast validation framework in Python for comparing multiple univariate conditional volatility forecast models based on their out-of-sample forecast losses.
 
 ## Installation
 ```bash
