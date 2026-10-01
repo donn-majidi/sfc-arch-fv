@@ -14,7 +14,7 @@
 \contentsline {subsubsection}{\numberline {3.5.3}Choice of Block Sizes}{16}{subsubsection.3.5.3}%
 \contentsline {section}{\numberline {4}Empirical Analysis}{16}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Results}{17}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Diagnostic Tests}{17}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Conclusion}{17}{section.5}%
-\contentsline {section}{\numberline {A}Code Implementation}{18}{appendix.A}%
+\contentsline {subsection}{\numberline {4.2}Diagnostic Tests}{24}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Conclusion}{26}{section.5}%
+\contentsline {section}{\numberline {A}Code Implementation}{27}{appendix.A}%
 \contentsfinish 

@@ -157,6 +157,50 @@
       \verb http://www.jstor.org/stable/2938229
       \endverb
     \endentry
+    \entry{ANDREWS_CUSUM}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=819f147f61363909f87ab9d5fdf6c835}{%
+           family={Andrews},
+           familyi={A\bibinitperiod},
+           given={Donald\bibnamedelimb W.\bibnamedelimi K.},
+           giveni={D\bibinitperiod\bibinitdelim W\bibinitperiod\bibinitdelim K\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {[Wiley, Econometric Society]}%
+      }
+      \strng{namehash}{819f147f61363909f87ab9d5fdf6c835}
+      \strng{fullhash}{819f147f61363909f87ab9d5fdf6c835}
+      \strng{bibnamehash}{819f147f61363909f87ab9d5fdf6c835}
+      \strng{authorbibnamehash}{819f147f61363909f87ab9d5fdf6c835}
+      \strng{authornamehash}{819f147f61363909f87ab9d5fdf6c835}
+      \strng{authorfullhash}{819f147f61363909f87ab9d5fdf6c835}
+      \field{extraname}{3}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{00129682, 14680262}
+      \field{journaltitle}{Econometrica}
+      \field{number}{4}
+      \field{title}{Tests for Parameter Instability and Structural Change With Unknown Change Point}
+      \field{urlday}{30}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{61}
+      \field{year}{1993}
+      \field{urldateera}{ce}
+      \field{pages}{821\bibrangedash 856}
+      \range{pages}{36}
+      \verb{urlraw}
+      \verb http://www.jstor.org/stable/2951764
+      \endverb
+      \verb{url}
+      \verb http://www.jstor.org/stable/2951764
+      \endverb
+    \endentry
     \entry{ANDREWSMONAHAN1992}{article}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=819f147f61363909f87ab9d5fdf6c835}{%
@@ -205,6 +249,57 @@
       \verb{url}
       \verb http://www.jstor.org/stable/2951574
       \endverb
+    \endentry
+    \entry{BALKEMA_DEHAAN}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=55fa7d47530e2e9bafa8ece966c53e06}{%
+           family={Balkema},
+           familyi={B\bibinitperiod},
+           given={A.\bibnamedelimi A.},
+           giveni={A\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d31b52095bde00da18e23ea162a351f3}{%
+           family={Haan},
+           familyi={H\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0,
+           prefix={de},
+           prefixi={d\bibinitperiod},
+           prefixun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Institute of Mathematical Statistics}%
+      }
+      \strng{namehash}{dc63aca94546541eff6fed6f3dbd675e}
+      \strng{fullhash}{dc63aca94546541eff6fed6f3dbd675e}
+      \strng{bibnamehash}{dc63aca94546541eff6fed6f3dbd675e}
+      \strng{authorbibnamehash}{dc63aca94546541eff6fed6f3dbd675e}
+      \strng{authornamehash}{dc63aca94546541eff6fed6f3dbd675e}
+      \strng{authorfullhash}{dc63aca94546541eff6fed6f3dbd675e}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Annals of Probability}
+      \field{number}{5}
+      \field{title}{Residual Life Time at Great Age}
+      \field{volume}{2}
+      \field{year}{1974}
+      \field{pages}{792\bibrangedash 804}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1214/aop/1176996548
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1214/aop/1176996548
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1214/aop/1176996548
+      \endverb
+      \keyw{distribution tail,Extreme value theory,regular variation,Residual life time}
     \endentry
     \entry{BERGMEIR201870}{article}{}
       \name{author}{3}{}{%
@@ -829,14 +924,57 @@
       \verb https://doi.org/10.1515/9780691218632
       \endverb
     \endentry
+    \entry{HANSEN_CUSUM}{article}{}
+      \name{author}{1}{}{%
+        {{un=1,uniquepart=given,hash=8ca4db09e38933c7a4bd5629789effa6}{%
+           family={Hansen},
+           familyi={H\bibinitperiod},
+           given={Bruce\bibnamedelima E.},
+           giveni={B\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=1}}%
+      }
+      \list{publisher}{1}{%
+        {[American Statistical Association, Taylor \& Francis, Ltd.]}%
+      }
+      \strng{namehash}{8ca4db09e38933c7a4bd5629789effa6}
+      \strng{fullhash}{8ca4db09e38933c7a4bd5629789effa6}
+      \strng{bibnamehash}{8ca4db09e38933c7a4bd5629789effa6}
+      \strng{authorbibnamehash}{8ca4db09e38933c7a4bd5629789effa6}
+      \strng{authornamehash}{8ca4db09e38933c7a4bd5629789effa6}
+      \strng{authorfullhash}{8ca4db09e38933c7a4bd5629789effa6}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{07350015}
+      \field{journaltitle}{Journal of Business \& Economic Statistics}
+      \field{number}{1}
+      \field{title}{Approximate Asymptotic P Values for Structural-Change Tests}
+      \field{urlday}{30}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{15}
+      \field{year}{1997}
+      \field{urldateera}{ce}
+      \field{pages}{60\bibrangedash 67}
+      \range{pages}{8}
+      \verb{urlraw}
+      \verb http://www.jstor.org/stable/1392074
+      \endverb
+      \verb{url}
+      \verb http://www.jstor.org/stable/1392074
+      \endverb
+    \endentry
     \entry{HANSENSPA2001}{article}{}
       \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=1b69f8d059ca7b024817e06b9be0fda6}{%
+        {{un=1,uniquepart=given,hash=1b69f8d059ca7b024817e06b9be0fda6}{%
            family={Hansen},
            familyi={H\bibinitperiod},
            given={Peter\bibnamedelima R.},
            giveni={P\bibinitperiod\bibinitdelim R\bibinitperiod},
-           givenun=0}}%
+           givenun=1}}%
       }
       \list{publisher}{1}{%
         {[American Statistical Association, Taylor \& Francis, Ltd.]}%
@@ -874,12 +1012,12 @@
     \endentry
     \entry{HANSENLUNDE2005}{article}{}
       \name{author}{2}{}{%
-        {{un=0,uniquepart=base,hash=1b69f8d059ca7b024817e06b9be0fda6}{%
+        {{un=1,uniquepart=given,hash=1b69f8d059ca7b024817e06b9be0fda6}{%
            family={Hansen},
            familyi={H\bibinitperiod},
            given={Peter\bibnamedelima R.},
            giveni={P\bibinitperiod\bibinitdelim R\bibinitperiod},
-           givenun=0}}%
+           givenun=1}}%
         {{un=0,uniquepart=base,hash=8d526c5bfbc93e7d59acb3e0d9853324}{%
            family={Lunde},
            familyi={L\bibinitperiod},
@@ -922,12 +1060,12 @@
     \endentry
     \entry{HANSENLUNDE_NASON2011}{article}{}
       \name{author}{3}{}{%
-        {{un=0,uniquepart=base,hash=1b69f8d059ca7b024817e06b9be0fda6}{%
+        {{un=1,uniquepart=given,hash=1b69f8d059ca7b024817e06b9be0fda6}{%
            family={Hansen},
            familyi={H\bibinitperiod},
            given={Peter\bibnamedelima R.},
            giveni={P\bibinitperiod\bibinitdelim R\bibinitperiod},
-           givenun=0}}%
+           givenun=1}}%
         {{un=0,uniquepart=base,hash=8d526c5bfbc93e7d59acb3e0d9853324}{%
            family={Lunde},
            familyi={L\bibinitperiod},
@@ -1046,6 +1184,49 @@
       \verb https://www.sciencedirect.com/science/article/pii/0304405X9400821H
       \endverb
     \endentry
+    \entry{HILL_ORIGINAL}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=98e26dab19f4808f69fa832666acc261}{%
+           family={Hill},
+           familyi={H\bibinitperiod},
+           given={Bruce\bibnamedelima M.},
+           giveni={B\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Institute of Mathematical Statistics}%
+      }
+      \strng{namehash}{98e26dab19f4808f69fa832666acc261}
+      \strng{fullhash}{98e26dab19f4808f69fa832666acc261}
+      \strng{bibnamehash}{98e26dab19f4808f69fa832666acc261}
+      \strng{authorbibnamehash}{98e26dab19f4808f69fa832666acc261}
+      \strng{authornamehash}{98e26dab19f4808f69fa832666acc261}
+      \strng{authorfullhash}{98e26dab19f4808f69fa832666acc261}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{00905364, 21688966}
+      \field{journaltitle}{The Annals of Statistics}
+      \field{number}{5}
+      \field{title}{A Simple General Approach to Inference About the Tail of a Distribution}
+      \field{urlday}{30}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{3}
+      \field{year}{1975}
+      \field{urldateera}{ce}
+      \field{pages}{1163\bibrangedash 1174}
+      \range{pages}{12}
+      \verb{urlraw}
+      \verb http://www.jstor.org/stable/2958370
+      \endverb
+      \verb{url}
+      \verb http://www.jstor.org/stable/2958370
+      \endverb
+    \endentry
     \entry{LI1987}{article}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=7b5d7a4ddf5246df1396f126e6446f11}{%
@@ -1091,7 +1272,7 @@
       \endverb
     \endentry
     \entry{GITHUB}{software}{}
-      \name{author}{4}{}{%
+      \name{author}{3}{}{%
         {{un=0,uniquepart=base,hash=df8b9c11a20b978496bab3b32e1c9159}{%
            family={Majidi},
            familyi={M\bibinitperiod},
@@ -1104,12 +1285,6 @@
            given={Pietro},
            giveni={P\bibinitperiod},
            givenun=0}}%
-        {{un=0,uniquepart=base,hash=929209b16b2f0af5a0dfa03c18a90655}{%
-           family={Zeri},
-           familyi={Z\bibinitperiod},
-           given={Tommaso},
-           giveni={T\bibinitperiod},
-           givenun=0}}%
         {{un=0,uniquepart=base,hash=14ca953d0a4e4d1eaf0ba2b1ed76af64}{%
            family={Baizullina},
            familyi={B\bibinitperiod},
@@ -1120,12 +1295,12 @@
       \list{publisher}{1}{%
         {GitHub}%
       }
-      \strng{namehash}{2091ce5d8e85552db53548b07fc5ae96}
-      \strng{fullhash}{a98aa06e05ca5a8be5db5f501fbe80b8}
-      \strng{bibnamehash}{2091ce5d8e85552db53548b07fc5ae96}
-      \strng{authorbibnamehash}{2091ce5d8e85552db53548b07fc5ae96}
-      \strng{authornamehash}{2091ce5d8e85552db53548b07fc5ae96}
-      \strng{authorfullhash}{a98aa06e05ca5a8be5db5f501fbe80b8}
+      \strng{namehash}{22a5fa452a760a5f295b578430ee6f38}
+      \strng{fullhash}{22a5fa452a760a5f295b578430ee6f38}
+      \strng{bibnamehash}{22a5fa452a760a5f295b578430ee6f38}
+      \strng{authorbibnamehash}{22a5fa452a760a5f295b578430ee6f38}
+      \strng{authornamehash}{22a5fa452a760a5f295b578430ee6f38}
+      \strng{authorfullhash}{22a5fa452a760a5f295b578430ee6f38}
       \field{sortinit}{M}
       \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
       \field{extradatescope}{labelyear}
@@ -1136,7 +1311,6 @@
       \field{title}{Forecast-Validation for optimal ARCH/GARCH model selection in Python}
       \field{version}{v1.2.0}
       \field{year}{2026}
-      \true{nocite}
       \verb{urlraw}
       \verb https://github.com/donn-majidi/sfclubunibo-arch-fv
       \endverb
@@ -1312,7 +1486,6 @@
       \field{title}{Correction to “Automatic Block-Length Selection for the Dependent Bootstrap” by D. Politis and H. White}
       \field{volume}{28}
       \field{year}{2009}
-      \true{nocite}
       \field{pages}{372\bibrangedash 375}
       \range{pages}{4}
       \verb{doi}
@@ -1367,6 +1540,48 @@
       \verb{url}
       \verb https://www.sciencedirect.com/science/article/pii/S030440761000076X
       \endverb
+    \endentry
+    \entry{PICKANDS}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=862e83aca643a383c256123a67d6b7a1}{%
+           family={Pickands\bibnamedelima III},
+           familyi={P\bibinitperiod\bibinitdelim I\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Institute of Mathematical Statistics}%
+      }
+      \strng{namehash}{862e83aca643a383c256123a67d6b7a1}
+      \strng{fullhash}{862e83aca643a383c256123a67d6b7a1}
+      \strng{bibnamehash}{862e83aca643a383c256123a67d6b7a1}
+      \strng{authorbibnamehash}{862e83aca643a383c256123a67d6b7a1}
+      \strng{authornamehash}{862e83aca643a383c256123a67d6b7a1}
+      \strng{authorfullhash}{862e83aca643a383c256123a67d6b7a1}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Annals of Statistics}
+      \field{number}{1}
+      \field{title}{Statistical Inference Using Extreme Order Statistics}
+      \field{volume}{3}
+      \field{year}{1975}
+      \field{pages}{119\bibrangedash 131}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1214/aos/1176343003
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1214/aos/1176343003
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1214/aos/1176343003
+      \endverb
+      \keyw{Extreme order statistics,Extreme values,generalized Pareto function,upper tail}
     \endentry
     \entry{POLITISROMANO1992}{inproceedings}{}
       \name{author}{2}{}{%
@@ -1493,7 +1708,6 @@
       \field{title}{Automatic Block-Length Selection for the Dependent Bootstrap}
       \field{volume}{23}
       \field{year}{2004}
-      \true{nocite}
       \field{pages}{53\bibrangedash 70}
       \range{pages}{18}
       \verb{doi}

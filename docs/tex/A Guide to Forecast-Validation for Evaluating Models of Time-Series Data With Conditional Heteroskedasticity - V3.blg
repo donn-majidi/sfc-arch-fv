@@ -1,15 +1,15 @@
 [0] Config.pm:307> INFO - This is Biber 2.19
 [0] Config.pm:310> INFO - Logfile is 'A Guide to Forecast-Validation for Evaluating Models of Time-Series Data With Conditional Heteroskedasticity - V3.blg'
-[47] biber:340> INFO - === Sat Aug 15, 2026, 18:58:06
-[60] Biber.pm:419> INFO - Reading 'A Guide to Forecast-Validation for Evaluating Models of Time-Series Data With Conditional Heteroskedasticity - V3.bcf'
-[103] Biber.pm:976> INFO - Using all citekeys in bib section 0
-[111] Biber.pm:4419> INFO - Processing section 0
-[117] Biber.pm:4610> INFO - Looking for bibtex file 'references.bib' for section 0
-[119] bibtex.pm:1713> INFO - LaTeX decoding ...
-[145] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
-[300] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[300] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[300] Biber.pm:4239> INFO - Sorting list 'nyt/global//global/global' of type 'entry' with template 'nyt' and locale 'en-US'
-[300] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
-[335] bbl.pm:660> INFO - Writing 'A Guide to Forecast-Validation for Evaluating Models of Time-Series Data With Conditional Heteroskedasticity - V3.bbl' with encoding 'UTF-8'
-[345] bbl.pm:763> INFO - Output to A Guide to Forecast-Validation for Evaluating Models of Time-Series Data With Conditional Heteroskedasticity - V3.bbl
+[125] biber:340> INFO - === Wed Sep 30, 2026, 14:50:54
+[151] Biber.pm:419> INFO - Reading 'A Guide to Forecast-Validation for Evaluating Models of Time-Series Data With Conditional Heteroskedasticity - V3.bcf'
+[268] Biber.pm:976> INFO - Using all citekeys in bib section 0
+[290] Biber.pm:4419> INFO - Processing section 0
+[306] Biber.pm:4610> INFO - Looking for bibtex file 'references.bib' for section 0
+[311] bibtex.pm:1713> INFO - LaTeX decoding ...
+[388] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
+[836] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[836] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[836] Biber.pm:4239> INFO - Sorting list 'nyt/global//global/global' of type 'entry' with template 'nyt' and locale 'en-US'
+[836] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[905] bbl.pm:660> INFO - Writing 'A Guide to Forecast-Validation for Evaluating Models of Time-Series Data With Conditional Heteroskedasticity - V3.bbl' with encoding 'UTF-8'
+[933] bbl.pm:763> INFO - Output to A Guide to Forecast-Validation for Evaluating Models of Time-Series Data With Conditional Heteroskedasticity - V3.bbl

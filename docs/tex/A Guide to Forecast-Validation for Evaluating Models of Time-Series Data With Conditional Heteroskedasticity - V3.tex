@@ -17,7 +17,7 @@
 \usepackage{soul}
 \usepackage{amsfonts}
 \usepackage{graphicx}
-\usepackage{subfig}
+%\usepackage{subfig}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{multicol}
@@ -32,7 +32,7 @@
 	urlcolor=cyan,
 	citecolor=blue,
 }
-
+\usepackage{listings}
 \usepackage{titletoc}
 \usepackage[
 style=authoryear, 
@@ -82,7 +82,7 @@ natbib=true
 \usepackage{fancyhdr}
 
 \title{\textbf{A Guide to Forecast-Validation for Evaluating Conditional Volatility Forecast Models}}
-\author{Takhmina Baizullina, Shahriyar Majidi, Pietro Sgrigna, Tommaso Zeri\\\\ Riot Investment Research}
+\author{Shahriyar Majidi, Takhmina Baizullina, Pietro Sgrigna\\\\ Riot Investment Research}
 \date{\today}
 
 \begin{document}
@@ -100,8 +100,9 @@ natbib=true
 	\begin{center}
 		\textbf{Abstract}
 	\end{center}
-	
-	This study analyzes the relationship between high-dimensional time series data through the lens of dynamic factor models, and the predictive capacity of such models in forecasting applications. Leveraging time series data from the Federal Reserve Bank of St. Louis FRED-QD database, we first identify the state space model representing this database, and then estimate the common factors using the expectation maximization algorithm with the Kalman smoother and augment the model by specifying a sparse VAR for the remaining idiosyncratic components by the means of $L_1$ penalized regression. Results reveal that dynamic factor models produce reliable forecasts of macroeconomic time series while simultaneously reducing the dimension of the database. Furthermore, we find that in the case of macroeconomic variables, once the common factors are extracted from the data, accounting for the remaining latent components in the database does not provide any meaningful information.
+
+	The aim of this paper is to estimate and compare multiple GARCH-type models on daily financial return data in a multiple comparison procedure. We specify and estimate 60 different GARCH-type processes on three distinct datasets including the daily stock returns of Cisco Systems, the daily returns of the S\&P 500 index, and the daily exchange rate between the British Pound - US dollar. The models are estimated over a rolling window of sample data and evaluated by their out-of-sample forecast losses. Certain issues concerning volatility modeling and maximum likelihood estimation are discussed and a validation framework for comparing and evaluating volatility forecast models based on their out-of-sample forecast losses is developed. The procedure laid out in this paper provides useful guidelines for model selection and forecast evaluation in a practical sense, and estimation best practices emerge. The paper is accompanied by a full disclosure programming code publicly available on GitHub with a step-by-step guide to full replication of the results in the paper, including the datasets used in the empirical analysis.
+
 	\newpage
 	\tableofcontents
 	\setcounter{tocdepth}{2} % 1 = Sections only, 2 = Subsections, etc.
@@ -113,11 +114,11 @@ natbib=true
 	This impressive pace in the development of volatility forecast models, however, had remained unmatched for the most part by model assessment methods to evaluate these models and to assess and compare their out-of-sample performance. This has led to an overwhelmingly large set of volatility forecast models that a practitioner has to choose from, which is often an onerous task, given the degree of similarity between the models and the lack of consistent forecast selection rules. This paper seeks to address this issue by developing a validation framework to evaluate models based on the forecasts that they produce. Our framework is founded on the grounds of multiple comparison procedures within the model selection literature, and can easily be adapted to forecast evaluation problems.
 	
 	\subsection{Relevance of Model Selection to Volatility Forecast Problems}
-	 An often challenging task during the course of an econometric analysis is the comparison of different models for modeling the particular data set at hand. Depending on the specific application, the comparison can be based on different metrics. A common metric for comparing different models, as in criterion based model selection, is the likelihood score, often penalized with the number of parameters being estimated in some way, with the penalty being higher for models with a larger number of unknown parameters. Penalizing models based on the number of parameters is rooted in the idea that by using estimates rather than the true values of the parameters, the model will drift farther apart from reality. Therefore, the information criteria generally favor more parsimonious models with fewer parameters over more complex models. The validity of the information criteria as reliable model assessment tools, however, relies heavily on the assumption that the models are not misspecified, at least not intentionally. This is a rather strong assumption that is often violated, for example in the case of Quasi-Maximum Likelihood Estimation, where the likelihood function is misspecified. See \textcite{BOLLERSLEV19942959} and \textcite{SIN1996207}. 
+	 An often challenging task during the course of an econometric analysis is the comparison of different models for modeling the particular dataset at hand. Depending on the specific application, the comparison can be based on different metrics. A common metric for comparing different models, as in criterion based model selection, is the likelihood score, often penalized with the number of parameters being estimated in some way, with the penalty being higher for models with a larger number of unknown parameters. Penalizing models based on the number of parameters is rooted in the idea that by using estimates rather than the true values of the parameters, the model will drift farther apart from reality. Therefore, the information criteria generally favor more parsimonious models with fewer parameters over more complex models. The validity of the information criteria as reliable model assessment tools, however, relies heavily on the assumption that the models are not misspecified, at least not intentionally. This is a rather strong assumption that is often violated, for example in the case of Quasi-Maximum Likelihood Estimation, where the likelihood function is misspecified. See \textcite{BOLLERSLEV19942959} and \textcite{SIN1996207}. 
 	 
-	 An alternative for comparing forecast models is the loss-evaluation of out-of-sample forecasts. This procedure requires the comparison of an appropriately defined loss function on the out-of-sample forecasts produced by each model, which is obtained by employing either a rolling or an expanding-window forecasting scheme. The choice between the rolling-window and the expanding-window forecasting schemes is often based on the assumptions surrounding the models and the data. For models with time-varying parameters, and for time-series data with rather short memories, the rolling-window scheme is deemed more appropriate in that it adapts to the most recent data while leaving out observations from the distant past that could become irrelevant as time moves forward. Moreover, by updating the parameter estimates upon each rolling forward of the training sample within the data set, the time-variability of the parameters can be appropriately accounted for. Once the series of forecast losses for each model is obtained, they can be compared to determine the model with the minimum overall loss.
+	 An alternative for comparing forecast models is the loss-evaluation of out-of-sample forecasts. This procedure requires the comparison of an appropriately defined loss function on the out-of-sample forecasts produced by each model, which is obtained by employing either a rolling or an expanding-window forecasting scheme. The choice between the rolling-window and the expanding-window forecasting schemes is often based on the assumptions surrounding the models and the data. For models with time-varying parameters, and for time-series data with rather short memories, the rolling-window scheme is deemed more appropriate in that it adapts to the most recent data while leaving out observations from the distant past that could become irrelevant as time moves forward. Moreover, by updating the parameter estimates upon each rolling forward of the training sample within the dataset, the time-variability of the parameters can be appropriately accounted for. Once the series of forecast losses for each model is obtained, they can be compared to determine the model with the minimum overall loss.
 	 
-	 One fundamental flaw with the direct comparison of the overall losses, however, is that it is prone to data snooping (or data mining). The effects of data snooping become prominent when multiple models are evaluated on the same data set, where some yield exceptionally smaller losses than others by chance alone, even if in reality they are equally good or even inferior. It is important, therefore, to control for the effects of data snooping in a hypothesis testing framework. The first to setup a testing framework of this kind was \textcite{WHITE-BRC}. The technique that \textcite{WHITE-BRC} employs involves the pairwise comparison of all the models with a given benchmark, and then to determine whether the benchmark is outperformed by any of the other models in the sample in a multiple testing framework. The size of this test, which is known as the Family Wise Error rate (FWE) is the main instrument by which tests of this kind control for data snooping.\footnote{The FWE is formally defined as the probability of incorrectly identifying at least one forecast model as superior to the benchmark (which again can happen due to the effects of data snooping).}
+	 One fundamental flaw with the direct comparison of the overall losses, however, is that it is prone to data snooping (or data mining). The effects of data snooping become prominent when multiple models are evaluated on the same dataset, where some yield exceptionally smaller losses than others by chance alone, even if in reality they are equally good or even inferior. It is important, therefore, to control for the effects of data snooping in a hypothesis testing framework. The first to setup a testing framework of this kind was \textcite{WHITE-BRC}. The technique that \textcite{WHITE-BRC} employs involves the pairwise comparison of all the models with a given benchmark, and then to determine whether the benchmark is outperformed by any of the other models in the sample in a multiple testing framework. The size of this test, which is known as the Family Wise Error rate (FWE) is the main instrument by which tests of this kind control for data snooping.\footnote{The FWE is formally defined as the probability of incorrectly identifying at least one forecast model as superior to the benchmark (which again can happen due to the effects of data snooping).}
 	 
 	 In addition to controlling for data snooping via the FWE, a desirable property for the statistical testing framework that we seek to develop is power. There are several different notions of power in statistical hypothesis testing. Perhaps the most familiar is the uniformly most powerful test, which has the greatest power among all tests of a given size. Even though the uniformly most powerful test can rather easily be achieved when testing for a single null hypothesis, when conducting a test of multiple hypotheses, power is restricted by the level enforced for the family wise error rate. For example, in the Bonferroni method for testing two hypotheses in a single multiple testing framework, each individual hypothesis can be conducted at most at a size $\alpha/2$ to ensure that the FWE is controlled at level $\alpha$.\footnote{See \textcite{ROMANOWOLF2005} section 2.3 and \textcite{ROMANOWOLF2005} appendix D for illuminating examples.} Nevertheless, some design considerations regarding the tests can lead to increased power while controlling the FWE at the same level. Two such mechanisms that we consider in this paper are the Step Wise Multiple testing procedure of \textcite{ROMANOWOLF2005} (abbreviated as StepM) and the Model Confidence Set of \textcite{HANSENLUNDE_NASON2011} (abbreviated as MCS).\footnote{There are of course other testing procedures which have the same objectives over power and the FWE. Some examples include the SPA test of \textcite{HANSENSPA2001}, and the BRC of \textcite{WHITE-BRC}. Although a complete survey of all the existing methods is not admissible, the methods that we introduce in this paper are flexible and powerful enough to accommodate for most forecast selection problems that a practitioner faces on a daily basis.} Each of these testing mechanisms, which fall under the category of multiple comparison procedures, exploit the dependency structure of the test statistics involved to improve the power of the tests, while maintaining control over the FWE. These procedures will be discussed in detail in section \ref{sec:valid_fw}.
 	 
@@ -535,20 +536,378 @@ natbib=true
 	\end{align}
 	In the expression above, the constant $c_i$ is set to $2$ for the stationary bootstrap and $4/3$ for the circular and the moving blocks bootstrap. The optimal block size is then computed for each individual series, and the largest resulting block size is taken as the optimal block size for the entire data matrix.
 	\section{Empirical Analysis}\label{sec:empirical}
-	We specify and estimate 60 different GARCH-type processes over an estimation period of 10 years starting from March 1st 2016.\footnote{Details are found in \textcite{GITHUB}.} Each model is estimated on a rolling window of 8 years of daily return data, and forecasts of 1-step ahead, 4-step ahead and 7-step ahead of the conditional variance are produced for out-of-sample forecast evaluation of the models. Forecast losses are then computed for each forecast horizon and for each model over the entire effective range of the sample available for out-of-sample loss evaluation.\footnote{The effective range is defined as: $T - ws - h + 1$, where $T$ is the sample size, $ws$ the window length and $h$ the forecast horizon.} The loss functions considered are the mean squared error and the quasi-likelihood loss function as described in section \ref{sec:loss-evaluation}. We carry out the full validation procedure of all 60 models on three different data sets which were all extracted from LSEG Datastream.
+	We specify and estimate 60 different GARCH-type processes over an estimation period of 10 years starting from March 1st 2016.\footnote{Details are found in \textcite{GITHUB}.} Each model is estimated on a rolling window of 8 years of daily return data, and forecasts of 1-step ahead, 4-step ahead and 7-step ahead of the conditional variance are produced for out-of-sample forecast evaluation. Forecast losses are then computed for each forecast horizon and for each model over the entire effective range of the sample available for out-of-sample loss evaluation.\footnote{The effective range is defined as: $T - ws - h + 1$, where $T$ is the sample size, $ws$ the window length and $h$ the forecast horizon.} The loss functions considered are the mean squared error and the quasi-likelihood loss function as described in section \ref{sec:loss-evaluation}. We carry out the full validation procedure of all 60 models on three different datasets.
 	
-	The first data set consists of the daily stock returns of Cisco Systems, Inc. over the period March 1st 2016 through March 1st 2026. The returns are constructed from the daily price data by computing the log-difference of the price series.\footnote{Some practitioners might prefer to use percentage change transformation on the price data for practical purposes. It should be noted though, that the difference between the choice of log returns and real returns in the analyses is marginal.} The second data set is comprised of the daily returns of the S\&P 500 index over the same period and the third data set includes the daily exchange rate between the Euro and the US dollar.
+	The first dataset consists of the daily stock returns of Cisco Systems, Inc. Cisco is a mass producer of network equipment founded in 1984 and it went public in 1990. It is one of the largest US companies by market capitalization and its stock is among the most liquid in the US equity market. We extract the daily price series from LSEG Datastream and construct the daily return series by computing log-differences. The second dataset is comprised of the daily returns of the S\&P500 index. We obtain the daily return series by extracting the daily values of the index from yahoofinance and then computing log-differences. The third and final dataset includes the daily exchange rate between the British Pound and the US dollar. The daily exchange rates are extracted from the Federal Reserve Bank of Saint Louis (FRED) database and then transformed via the log-difference transform to yield stationary return series.
+	
+	The estimation window and the evaluation period are the same for all three datasets. Starting from March 1st 2016, the estimation window consists of 8 years of daily data which is equal to 2016 data points. Each model is re-fitted on the data and parameter estimates are updated every 21 trading days which corresponds to approximately one calendar month. The effective evaluation period for the 1-step ahead, 4-step ahead and 7-step ahead forecast horizons includes 504, 501, and 498 data points respectively.
 	
 	\subsection{Results}
+	Figure \ref{fig:kdes_1} panels a through c show the KDE plots of the 1-step ahead model forecast losses for each dataset grouped by their likelihood functions. The densities are estimated with the Guassian Kernel with bandwidth equal to one. Overall, there is no significant difference between the loss densities entailed by different likelihood specifications. The plots further show the average loss of the benchmark Gaussian GARCH(1,1) model and the average loss of the model with the minimum average forecast loss. In the case of the third dataset which is composed of the exchange rate between the British Pound and the US dollar the benchmark model and the minimum loss model coincide. 
 	
+	The results of the StepM model comparison are presented schematically in figure \ref{fig:kdes_1} panels d through f. The scatter plots show the average forecast losses of each model along the y-axis, indexed by the model number on the x-axis. In each of the panels, the benchmark Gaussian GARCH(1,1) model average forecast loss is marked by an asterisk. To run the StepM procedure, we used the stationary bootstrap and with 10000 bootstrap repetitions. The tests were conducted at the 5\% significance level. It can be seen from the scatter plots, that with the exception of the S\&P500 dataset, the benchmark is not outperformed by any of the other models within the group.
+	
+	Finally, the MCS at the 5\% significance level is shown in figure \ref{fig:mcs_all} on the left in panels a through c. The plots are the same scatter plots as in figure \ref{fig:kdes_1}, with the exception that for the models which are included in the model confidence set the average forecast losses are marked with orange squares whereas for models that are excluded from the model confidence set they are marked with blue dots. A direct comparison of the scatter plots from figure \ref{fig:mcs_all} with those from figure \ref{fig:kdes_1} demonstrates that the results of the StepM procedure and the MCS are compatible with one another. For the first dataset which includes the daily stock returns of Cisco, the StepM does not identify any superior models to the benchmark Gaussian GARCH(1,1) model at 5\% significance level and the MCS does not exclude the Gaussian GARCH(1,1) model from the model confidence set at the same 5\% significance level. For the S\&P500 dataset, the MCS includes only the models that the StepM has identified as superior to the benchmark model in the model confidence set and excludes both the Gaussian GARCH(1,1) and all the other models that are not flagged as superior to the benchmark by the StepM procedure. All in all, both the StepM procedure and MCS show great consistency in the results.
+	
+	The finding that for the daily returns on the stock of Cisco Systems the benchmark Gaussian GARCH(1,1) model is not outperformed by models with asymmetry effects is interesting in its own right. It is widely acknowledged that equity returns exhibit strong leverage effects, and this has also been empirically confirmed by numerous studies. At the same time, the analysis of the S\&P500 data shows that asymmetric models that incorporate the leverage effect have higher predictive ability. One explanation for these results may be found in the fact that while richer models have potentially higher explanatory and predictive power, the use of imperfect proxies such as squared returns used in this analysis for their estimation limits the extent to which they can improve over the plain baseline models. When the proxy variables involved are too noisy, any gains in predictive ability brought about by the more sophisticated dynamics will be offset by the loss in estimation efficiency pertaining to the increase in the number of model parameters. A second explanation is that when the return series become too volatile and extreme observations re-occur too often in the data, all models suffer from large amounts of forecast losses and it becomes increasingly difficult to distinguish outperforming and underperforming models when all models are performing poorly over the evaluation period. Figure \ref{fig:kdes_2} further demonstrates this point where the 60 models are refit on the same three datasets but over the period spanning March 1st 2000 through March 1st 2010. In contrast to the results obtained from the previous analysis, the StepM procedure identifies at least 4 superior models to the benchmark Gaussian GARCH(1,1) model on the Cisco returns dataset and the model is also excluded from the model confidence set by the MCS procedure. For the S\&P 500 dataset, although the Gaussian GARCH(1,1) model was found to be outperformed unequivocally by both the StepM and MCS procedures, it is now within the margins of equally well-performing models. The only exception is the GBP-USD exchange rate dataset where both of the model comparison procedures yield the same conclusions over both periods. Indeed, the GBP-USD exchange rate has undergone more extreme volatility episodes during the time around the global financial crisis of 2008-2009, making the models suffer from even heavier forecast losses during the period. Results from the model confidence set displayed in panels d through f in figure \ref{fig:mcs_all} yield the same conclusions.
+	
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_kde_1.png}
+		\caption{Cisco daily returns.}\label{fig:a}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_stepm_1.png}
+		\caption{Cisco daily returns.}\label{fig:d}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_kde_1.png}
+		\caption{S\&P500 daily returns.}\label{fig:b}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_stepm_1.png}
+		\caption{S\&P500 daily returns.}\label{fig:e}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_kde_1.png}
+		\caption{GBP/USD daily exchange rate.}\label{fig:c}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_stepm_1.png}
+		\caption{GBP/USD daily exchange rate.}\label{fig:f}
+	\end{subfigure}
+	\caption{Loss densities and model comparison results over the evaluation period March 1st 2016 to March 1st 2026. Panels a through c show the KDE plots of the forecast losses of all 60 fitted models over the evaluation period for each dataset. The KDE plots are drawn separately for each group of models based on their likelihood function. There are overall three distinct likelihood functions used in the construction of the models, the Gaussian, the Student's t and the Standardized Skew Student's t likelihood functions. The average forecast loss of the benchmark model and the model with the minimum average loss (denoted minimum QLIKE model) are shown on the plots by vertical lines. Panels d through f on the right show the scatter plots of the average forecast losses along the y-axis for each of the 60 models indexed by the model number on the x-axis. The benchmark Gaussian GARCH(1,1) model is marked by an asterisk (*) in each plot and the outperforming models, if any, are indicated by orange squares. Models that do not outperform the benchmark are indicated by blue dots.}
+	\label{fig:kdes_1}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_kde_1_2k.png}
+		\caption{Cisco daily returns.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_stepm_1_2k.png}
+		\caption{Cisco daily returns.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_kde_1_2k.png}
+		\caption{S\&P500 daily returns.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_stepm_1_2k.png}
+		\caption{S\&P500 daily returns.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_kde_1_2k.png}
+		\caption{GBP/USD daily exchange rate.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_stepm_1_2k.png}
+		\caption{GBP/USD daily exchange rate.}
+	\end{subfigure}
+	\caption{Loss densities and model comparison results over the evaluation period March 1st 2000 to March 1st 2010. Panels a through c show the KDE plots of the forecast losses of all 60 fitted models over the evaluation period for each dataset. The KDE plots are drawn separately for each group of models based on their likelihood function. There are overall three distinct likelihood functions used in the construction of the models, the Gaussian, the Student's t and the Standardized Skew Student's t likelihood functions. The average forecast loss of the benchmark model and the model with the minimum average loss (denoted minimum QLIKE model) are shown on the plots by vertical lines. Panels d through f on the right show the scatter plots of the average forecast losses along the y-axis for each of the 60 models indexed by the model number on the x-axis. The benchmark Gaussian GARCH(1,1) model is marked by an asterisk (*) in each plot and the outperforming models, if any, are indicated by orange squares. Models that do not outperform the benchmark are indicated by blue dots.}
+	\label{fig:kdes_2}
+\end{figure}
+\clearpage
+
+\begin{figure}[p]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_mcs_1.png}
+		\caption{Cisco daily returns. Period 2016 - 2026.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_mcs_1_2k.png}
+		\caption{Cisco daily returns. Period 2000 - 2010.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_mcs_1.png}
+		\caption{S\&P500 daily returns. Period 2016 - 2026.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_mcs_1_2k.png}
+		\caption{S\&P500 daily returns. Period 2000 - 2010.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_mcs_1.png}
+		\caption{GBP/USD daily exchange rate. Period 2016 - 2026.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_mcs_1_2k.png}
+		\caption{GBP/USD daily exchange rate. Period 2000 - 2010.}
+	\end{subfigure}
+	\caption{Scatter plots of average model forecast losses. The panels on the left show the scatter plots over the validation period spanning from March 1st 2016 through March 1st 2026, and the panels on the left show the same plots for the same datasets over the period March 1st 2000 to March 1st 2010. The average forecast losses of models that are included in the model confidence set are indicated with orange squares. Models that are excluded from the model confidence set have their average forecast losses indicated by blue dots in the plots.}
+	\label{fig:mcs_all}
+\end{figure}
+\clearpage
+
+\begin{figure}[p]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_kde_4.png}
+		\caption{Cisco daily returns.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_stepm_4.png}
+		\caption{Cisco daily returns.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_kde_4.png}
+		\caption{S\&P500 daily returns.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_stepm_4.png}
+		\caption{S\&P500 daily returns.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_kde_4.png}
+		\caption{GBP/USD daily exchange rate.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_stepm_4.png}
+		\caption{GBP/USD daily exchange rate.}
+	\end{subfigure}
+	\caption{Loss densities and model comparison results over the evaluation period March 1st 2016 to March 1st 2026 for 4-step ahead conditional forecasts. Panels a through c show the KDE plots of the forecast losses of all 60 fitted models over the evaluation period for each dataset. The KDE plots are drawn separately for each group of models based on their likelihood function. There are overall three distinct likelihood functions used in the construction of the models, the Gaussian, the Student's t and the Standardized Skew Student's t likelihood functions. The average forecast loss of the benchmark model and the model with the minimum average loss (denoted minimum QLIKE model) are shown on the plots by vertical lines. Panels d through f on the right show the scatter plots of the average forecast losses along the y-axis for each of the 60 models indexed by the model number on the x-axis. The benchmark Gaussian GARCH(1,1) model is marked by an asterisk (*) in each plot and the outperforming models, if any, are indicated by orange squares. Models that do not outperform the benchmark are indicated by blue dots.}
+	\label{fig:kdes_4}
+\end{figure}
+\clearpage
+
+\begin{figure}[p]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_kde_7.png}
+		\caption{Cisco daily returns.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_stepm_7.png}
+		\caption{Cisco daily returns.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_kde_7.png}
+		\caption{S\&P500 daily returns.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_stepm_7.png}
+		\caption{S\&P500 daily returns.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_kde_7.png}
+		\caption{GBP/USD daily exchange rate.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_stepm_7.png}
+		\caption{GBP/USD daily exchange rate.}
+	\end{subfigure}
+	\caption{Loss densities and model comparison results over the evaluation period March 1st 2016 to March 1st 2026 for 7-step ahead conditional forecasts. Panels a through c show the KDE plots of the forecast losses of all 60 fitted models over the evaluation period for each dataset. The KDE plots are drawn separately for each group of models based on their likelihood function. There are overall three distinct likelihood functions used in the construction of the models, the Gaussian, the Student's t and the Standardized Skew Student's t likelihood functions. The average forecast loss of the benchmark model and the model with the minimum average loss (denoted minimum QLIKE model) are shown on the plots by vertical lines. Panels d through f on the right show the scatter plots of the average forecast losses along the y-axis for each of the 60 models indexed by the model number on the x-axis. The benchmark Gaussian GARCH(1,1) model is marked by an asterisk (*) in each plot and the outperforming models, if any, are indicated by orange squares. Models that do not outperform the benchmark are indicated by blue dots.}
+	\label{fig:kdes_7}
+\end{figure}
+\clearpage
+
+\begin{figure}[p]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_mcs_4.png}
+		\caption{Cisco daily returns. 4-Step ahead forecasts.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/cisco_mcs_7.png}
+		\caption{Cisco daily returns. 7-Step ahead forecasts.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_mcs_4.png}
+		\caption{S\&P500 daily returns. 4-Step ahead forecasts.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/spx_mcs_7.png}
+		\caption{S\&P500 daily returns. 7-Step ahead forecasts.}
+		\addtocounter{subfigure}{-3}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_mcs_4.png}
+		\caption{GBP/USD daily exchange rate. 4-Step ahead forecasts.}
+		\addtocounter{subfigure}{2}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./figures/gbp_mcs_7.png}
+		\caption{GBP/USD daily exchange rate. 7-Step ahead forecasts.}
+	\end{subfigure}
+	\caption{Scatter plots of average model forecast losses over the validation period spanning from March 1st 2016 through March 1st 2026. The panels on the left show the scatter plots of the average losses of 4-step ahead forecasts, and the panels on the left show the same plots for 7-step ahead forecasts. The average forecast losses of models that are included in the model confidence set are indicated with orange squares. Models that are excluded from the model confidence set have their average forecast losses indicated by blue dots in the plots.}
+	\label{fig:mcs_all_lh}
+\end{figure}
+\clearpage
+
+The results for the 4-step ahead and 7-step ahead forecast evaluations are shown in figure \ref{fig:kdes_4} and figure \ref{fig:kdes_7} respectively. Since neither analytical nor simulated forecasts are available for forecast horizons greater than 1 for the APARCH(2,2,2) model on the Cisco daily returns and GBP/USD daily exchange rate datasets, this model along with all three of its likelihood specifications are excluded from the forecast evaluation procedure. As can be seen from the KDE plots, as the forecast horizon increases the difference between the loss densities of the different likelihood functions becomes more pronounced. Moreover, the StepM procedure does not identify any superior models to the benchmark at 4-step ahead and 7-step ahead forecasts. A possible explanation is that the markets have been too volatile in the recent past due to global shocks owing to the COVID-19 pandemic and recent geopolitical tensions which have caused the occurrence of too many extreme observations that have had sizable distortions on the model forecasts and consequently their predictive power over longer horizons. The same conclusions follow from the model confidence sets as demonstrated schematically in figure \ref{fig:mcs_all_lh}. The only exception is the case of the S\&P 500 index daily returns where 4 models are excluded from the model confidence set for 4-step ahead forecasts and 1 for 7-step ahead forecasts. In both cases, however, the Gaussian GARCH(1,1) model is still included in the model confidence set, in accordance with the results obtained from the StepM procedure.
+
 	\subsection{Diagnostic Tests}\label{sec:diagnostics}
+
+	In order to verify the assumptions made during the estimation process, namely the finiteness and stability of the 2nd and 4th order moments of the standardized residuals, we employ two tests. The first is the SupF CUSUM of squares test developed by \textcite{HANSEN_CUSUM} \textcite{ANDREWS_CUSUM}. If the 2nd order moment of a stochastic process exists and is stable over time, then the recursive estimates of the variance of the process must not diverge significantly from the sample variance of the process estimated using the full sample. At any time $t$, the CUSUM of squares of the estimated variance of the standardized residuals is computed as:
+	\begin{align}
+		\sum_{i=1}^t (z_i^2 - \hat{\mu}_{2,T}),
+	\end{align}
+	where $\hat{mu}_{2,T}$ is the sample variance. The classical time-dependent test statistic for the CUSUM test is defined as:
+	\begin{align}
+		\phi(t) = \frac{1}{\sqrt{T\hat{v}}} \sum_{i=1}^t (z_i^2 - \hat{\mu}_{2,T}),
+	\end{align}
+	where $\hat{v}$ is an estimate of the asymptotic variance of the CUSUM of squares of the variance and $T$ is the sample size. Under the null hypothesis that the 2n order moment of the process is stable over time, the test statistic defined above then is asymptotically normally distributed as:
+	\begin{align}
+		\phi(t) \sim \mathcal{N}(0,t/T(1-t/T)).
+	\end{align}
+	Therefore, the test statistic $\phi(t)$ is essentially being modeled as a Brownian motion with its variance scaled by the factor $(1-t/T)$. For the moment stability condition to be satisfied, the CUSUM of squares defined above must not differ significantly from zero over the entire sample. In order to test whether this condition is violated and at any point in the sample -- this point is typically referred to as the break point -- it would be enough to take the supremum of the computed CUSUM of squares and concentrate the power of the test on that particular value. The test statistic is consequently defined as:
+	\begin{align}
+		&\psi = \theta_0 + \theta_1 \, SupF, \\
+		&SupF = \sup_{t \in \tau} \left\{ \frac{\phi^2(t)}{t/T (1-t/T)} \right\}, \\
+		&\tau = [cT, (1-c)T],
+	\end{align}
+	where $c\in(0,1)$ is a trimming factor that defines the search range for the supremum. The test statistic defined above has an asymptotic chi-squared distribution with a nuisance parameter $\eta$:
+	\begin{align}
+		\psi \sim \mathcal{X}^2(\eta),
+	\end{align}
+	where the parameters $\theta_0$, $theta_1$, and $\eta$ are tabulated for specific values for the trimming fraction in \textcite{HANSEN_CUSUM}.\footnote{Specific values can be found in table 2 of the aforementioned paper. These values are the ones also used in the `cusum\_supf\_test` module in the companion code for the present paper.} The same test can be conducted for assessing the stability of the 4th order moments as well, using the 4th power of the standardized residuals and the 4th sample moment in the definition of the CUSUM of squares as follows:
+	\begin{align}
+		\sum_{i=1}^t (z_i^4 - \hat{\mu}_{4,T}).
+	\end{align}
+	For all the models defined above, the moment stability conditions for both the 2nd and 4th order moments are satisfied. For clarity, the results of the SupF CUSUM test for the 2nd order moment stability of the standardized residuals of the Gaussian GARCH(1,1) model on each of the three datasets is reported in table \ref{tab:cusum}.
+	
+	\begin{table}[h!]
+		\centering
+		\resizebox{\textwidth}{!}{
+		\begin{tabular}{lccc}
+			\toprule
+			Dataset & Trimming fraction & SupF Test Statistic & p-value \\
+			\midrule
+			Cisco daily returns & 0.15 & 1.99 & 0.57 \\
+			S\&P 500 index daily returns & 0.15 & 2.68 & 0.44 \\
+			GBP-USD daily exchange rate & 0.15 & 1.15 & 0.76 \\
+			\bottomrule
+		\end{tabular}
+		}
+		\caption{Results of the SupF CUSUM of squares test for the 2nd order moment of the standardized residuals of the Gaussian GARCH(1,1) model. Under the null hypothesis, the estimated moments exist and are stable over time.}
+		\label{tab:cusum}
+	\end{table}
+	In addition to the moment stability test discussed above, we develop a test based on the Pickands estimator \textcite{PICKANDS} for the tail index of the right tail of the distribution of the standardized residuals. According to the Pickands-Balkema-De Haan theorem \textcite{PICKANDS} and \textcite{BALKEMA_DEHAAN}, the asymptotic tail distribution of a random variable with an unknown distribution is given by the Generalized Pareto Distribution as follows:
+	\begin{align}
+		&G_{\xi, \sigma} (y) = 1 - (1 + \xi y\sigma)^{-\frac{1}{\xi}}  &if \xi \neq 0 \\
+		&G_{\xi, \sigma} (y) = 1 - exp(-y/\sigma)   &if \xi = 0
+	\end{align}
+	The shape and scale parameters, $\xi$ and $\sigma$, can be estimated via maximum likelihood. In order to do so, the extreme value observations, we filter the data above the 95th percentile threshold, are ordered and centered by subtracting the value of the threshold from each observation. For a Generalized Pareto Distribution, only moments of order less than $1/\xi$ exist, therefore, the estimated tail indexes can provide insight into the existence of the 2nd and 4th order moments. The maximum likelihood estimator of the shape parameter is asymptotically normally distributed as:
+	\begin{align}
+		\sqrt{m} ( \hat{\xi} - \xi_0 ) \sim \mathcal{N}\left( 0, (1+\xi_0)^2 \right),
+	\end{align}
+	where $\xi_0$ is the hypothesized value of the tail index, and $m$ is the number of extreme observations. One way to test for the existence of a particular moment order is to plug $\xi_0 = 1/r$ in the test statistic defined above where $r$ is the moment order being tested. Alternatively, confidence intervals can be constructed by obtaining standard errors of the estimator by plugging in the value of $\hat{\xi}$ in the expression for the variance. The standard error of $\hat{\xi}$ is given by:
+	\begin{align}
+		\hat{\nu} = \frac{1 + \hat{\xi}}{\sqrt{m}}.
+	\end{align}
+	Confidence intervals are then constructed as:
+	\begin{align}
+		CI = \left[\hat{\xi} - \Phi^{-1}(1-\alpha/2) \hat{\nu} \, , \, \hat{\xi} + \Phi^{-1}(1-\alpha/2) \hat{\nu} \right],
+	\end{align}
+	where $\Phi^{-1}(\cdot)$ is the inverse CDF of the standard normal distribution and $\alpha$ is the significance level. It is worth noting that the MLE of the tail index is only asymptotically normally distributed in the region $\xi \in (-0.5,\infty)$. For values less than $-0.5$ the MLE is no longer asymptotically normal, although consistent, and for values less than $-1$ it is no longer consistent. Figure \ref{fig:ti_all} displays the maximum likelihood estimates of the tail index of the standardized residuals of each of the 60 fitted models along with their estimated $95\%$ confidence intervals. For the residuals obtained from the GBP-USD exchange rate dataset all the estimated tail indexes are negative and except for four of them they all lie below the -0.5 threshold. For the Cisco daily returns, the estimated tail indexes are below 0.5 and for the S\&P 500 index daily returns the estimates are below 0.5 as well with only the exception of model number 6 which corresponds to the Gaussian GJR-GARCH(2,2,2) model. These results generally confirm the finiteness of the 2nd order moments, but not the finiteness of the 4th order moments which require the tail index to be less than 0.25.
+	
+	\begin{figure}[!htb]
+		\centering
+		\begin{subfigure}{0.48\textwidth}
+			\includegraphics[width=\textwidth]{./figures/cisco_ti_1.png}
+			\caption{Cisco daily returns. Tail index estimates.}
+		\end{subfigure}
+		\begin{subfigure}{0.48\textwidth}
+			\includegraphics[width=\textwidth]{./figures/spx_ti_1.png}
+			\caption{S\&P 500 index daily returns. Tail index estimates.}
+		\end{subfigure}
+		\begin{subfigure}{0.48\textwidth}
+			\includegraphics[width=\textwidth]{./figures/gbp_ti_1.png}
+			\caption{GBP/USD daily exchange rate. Tail index estimates.}
+		\end{subfigure}
+		\caption{Tail index estimates of the standardized residuals obtained from each model along with the estimated $95\%$ confidence intervals. For tail index estimates less than -0.5 standard errors are unavailable and therefore the confidence bands are not estimated.}
+		\label{fig:ti_all}
+	\end{figure}
 	
 	\section{Conclusion}\label{sec:conclusion}
-	\newpage
+	In this paper we developed a validation framework for comparing multiple conditional volatility forecast models based on their out-of-sample forecasts. Through a survey of the GARCH class of models we discussed several issues relating to the modeling of the conditional variances of financial returns, the maximum likelihood estimation of the models, and the loss evaluation of the out-of-sample forecasts when proxies are used instead of the latent variables. We explained and discussed in detail two distinct multiple comparison procedures suitable for forecast selection among multiple candidate forecast models. We finally explored an array of ex-post diagnostic tests for verifying the assumptions that underlie the estimation of the models. In our empirical analysis, we defined and estimated 60 different GARCH-type models on three different datasets and over two estimation periods. Our results show that the relative predictive power of different conditional volatility forecast models change over time and depends on the dataset and the estimation and evaluation period. Our diagnostic tests on the standardized residuals obtained from the models generally show that the conditions required for the existence of the variance process are satisfied. The results for the higher 4th order moment condition for the asymptotic efficiency of the maximum likelihood estimator, however, have been mixed. One diagnostic test shows that the 4th order moment of the processes of the standardized residuals is finite and stable over time. The other test, which is also based on much fewer observations due to its construction does not provide enough satisfactory evidence in favor of the finiteness of the 4th order moments.
+
+\pagebreak
 	
 	\appendix
 	\section{Code Implementation}\label{app:code_a}
 	
+	The companion code to this paper can be found online at \textcite{GITHUB}. After having cloned the repository and installed the required packages, the pipeline can be initiated as shown in the following. For more details consult the README.md file on the repository main page.
+	
+	\begin{lstlisting}[language=Python, basicstyle=\small\ttfamily, breaklines=true, breakatwhitespace=true, tabsize=4, showstringspaces=false]
+import numpy as np
+import pandas as pd
+from src.models.validator import Validator
+
+## Import data from local data source
+start_date = '2016-03-01'
+end_date = '2026-03-01'
+ps = pd.read_csv('./data/cisco.csv', index_col=0)
+rs = np.log(ps['CISCO SYSTEMS'].loc[start_date:end_date]).diff().dropna() * 100
+## Drop all rows where returns are zero
+rs = rs[rs != 0]
+
+## Set index data type to datetime
+rs.index = pd.to_datetime(rs.index)
+
+## Import arch model constructor
+from arch import arch_model
+## GARCH(1,1) with Gaussian likelihood function.
+mod1 = arch_model(returns, vol='GARCH', p=1, o=0, q=1, dist='gaussian')
+## GJR_GARCH(1,1,1) with Studend-t likelihood function.
+mod2 = arch_model(returns, vol='GARCH', p=1, o=1, q=1, dist='studentst')
+
+## Create array of model instances
+models = np.asarray([mod1, mod2], dtype=object) 
+## NOTE! The dtype of the array has to be explicitly set to object.
+
+## Create and instance of the Validator class
+model_validator = Validator(endog=returns, models=models)
+
+## Set the input parameters to feed to the validate() method
+ws, uf, fh = 252, 21, 1  # Window size, Update frequency, Forecast horizon
+# Significance levels for Value at Risk and Expected Shortfall estimation. This parameter is optional.
+alpha = [0.01,0.05]
+## Index align method for out-of-sample forecasts and corresponding losses. If not passed, the default align method will be used: 'origin'.
+align = 'target'  
+
+model_validator.validate(window_size=ws, horizon=fh, update_frequency=uf, alpha = alpha, align=align)
+
+## Out-of-sample forecasts along with forecast losses can be accessed from class properties.
+mv_forecasts = model_validator.forecasts  ## DataFrame containing index aligned out-of-sample forecasts
+mv_mse = model_validator.mse_loss  ## DataFrame containing squared forecast errors
+mv_qlike = model_validator.qlike_loss  ## DataFrame containing quasi-likelihood scores
+
+## Standardized residuals obtained from each iteration can be accessed via:
+mv_resid = model_validator.std_residuals
+	\end{lstlisting}
 	
 	\newpage
 	\nocite{*}
