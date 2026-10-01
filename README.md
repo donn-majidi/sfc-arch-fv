@@ -26,6 +26,13 @@ pip install -r requirements.txt
 See [Requirements](#requirements) for the list of required packages.
 
 ## Workflow
+| Step | Stage | Code | Produces |
+|---|---|---|---|
+| 1 | Prepare the return series | from data pipeline (e.g. `np.log(prices).diff() * 100`) | a demeaned/log return series, free of `NaN`s |
+| 2 | Build candidate models | `arch_model(...)`, or `ZeroMean`/`ARX` + a volatility process + a distribution, from the [`arch`](https://bashtage.github.io/arch/) package | an object array of `ARCHModel` instances |
+| 3 | Rolling-window estimation & forecasting | [`Validator(endog, models).validate(...)`](#models) | index-aligned forecasts, `mse_loss`/`qlike_loss`, VaR/ES, `std_residuals`, `model_fits` |
+| 4 | Multiple-comparison testing (optional) | `arch.bootstrap.StepM` / `MCS`, fed `Validator`'s loss series, with block size from [`bootstrap_block_size`](#bootstrap_block_size) | superior models (StepM) / the model confidence set (MCS) |
+| 5 | *Ex-post* diagnostics (optional) | [`cusum_supf_test`](#cusum_supf_test), [`GenParetoMLE`](#class-genparetomle) + [`tail_index_ci`](#tail_index_ci), [`jb_test`](#jb_test), fed `Validator`'s `std_residuals` | moment-stability test, tail-index estimate & CI, normality test |
 
 ## Usage Example
 ```python
@@ -109,7 +116,7 @@ Model validator class for rolling-window forecast loss evaluations.
 ```python
 validate(window_size: int,
           horizon: int,
-          update_frequency: int,
+          update_frequency: int = 1,
           alpha: np.ndarray | None = None,
           align: str | None = 'origin')
   ```
@@ -155,7 +162,7 @@ compute_loss(forecasts: np.ndarray,
 - `value_at_risk`: Dataframe of h-step-ahead conditional value at risk forecast per model. The columns are multi-indexed per model per significance level.
 - `expected_shortfall`: Dataframe of h-step-ahead conditional expected shortfall per model. The columns are multi-indexed per model per significance level.
 - `std_residuals`: Standardized residuals obtained from the last observation in each estimation window.
-- `model_fits`: Array containing estimated model results on the last estimation window.
+- `model_fits`: Array containing fitted parameters from the last estimation loop.
 
 ## Extra Modules
 
@@ -292,7 +299,7 @@ where $m$ is the number of extreme observations, i.e., the size of the series pa
 ```
 Hence the confidence intervals at significance level $\alpha$ are computed as:
 ```math
-                    CI = \left[  -\Phi^{-1}(1-\alpha) \hat{\nu} \, , \, +\Phi^{-1}(1-\alpha) \hat{\nu}  \right].
+                    CI = \left[  \hat{\xi} - \Phi^{-1}(1-\alpha/2) \hat{\nu} \, , \, \hat{\xi} + \Phi^{-1}(1-\alpha/2) \hat{\nu}  \right].
 ```
 Trivially, moments of order $r$ and lower exist if and only if $r < 1/\xi_0$.
 
@@ -356,7 +363,20 @@ print(jb_results)
 - [`scikit-learn>=1.8.0`](https://scikit-learn.org/)
 - [`statsmodels>=0.14.0`](https://www.statsmodels.org/)
 - [`arch>=8.0.0`](https://bashtage.github.io/arch/)
+- [`yfinance>=1.6.0`](https://github.com/ranaroussi/yfinance)
 ## References
+- Balkema, A. A., & de Haan, L. (1974). Residual Life Time at Great Age. *The Annals of Probability*, 2(5), 792–804.
+- Bollerslev, T. (1986). Generalized Autoregressive Conditional Heteroskedasticity. *Journal of Econometrics*, 31(3), 307–327.
+- Engle, R. F. (1982). Autoregressive Conditional Heteroscedasticity with Estimates of the Variance of United Kingdom Inflation. *Econometrica*, 50(4), 987–1007.
+- Hansen, B. E. (1997). Approximate Asymptotic P Values for Structural-Change Tests. *Journal of Business & Economic Statistics*, 15(1), 60–67.
+- Hansen, P. R., Lunde, A., & Nason, J. M. (2011). The Model Confidence Set. *Econometrica*, 79(2), 453–497.
+- Jarque, C. M., & Bera, A. K. (1980). Efficient Tests for Normality, Homoscedasticity and Serial Independence of Regression Residuals. *Economics Letters*, 6(3), 255–259.
+- Patton, A. J. (2011). Volatility Forecast Comparison Using Imperfect Volatility Proxies. *Journal of Econometrics*, 160(1), 246–256.
+- Patton, A., Politis, D. N., & White, H. (2009). Correction to "Automatic Block-Length Selection for the Dependent Bootstrap" by D. Politis and H. White. *Econometric Reviews*, 28(4), 372–375.
+- Pickands III, J. (1975). Statistical Inference Using Extreme Order Statistics. *The Annals of Statistics*, 3(1), 119–131.
+- Politis, D. N., & White, H. (2004). Automatic Block-Length Selection for the Dependent Bootstrap. *Econometric Reviews*, 23(1), 53–70.
+- Romano, J. P., & Wolf, M. (2005). Stepwise Multiple Testing as Formalized Data Snooping. *Econometrica*, 73(4), 1237–1282.
+- Sheppard, K. (2025). *bashtage/arch* (Version 8.0.0) [Software]. Zenodo. https://doi.org/10.5281/zenodo.593254
 
 ## License
 This product is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
