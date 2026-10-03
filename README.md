@@ -1,4 +1,4 @@
-# sfclubunibo-arch-fv
+# sfc-arch-fv
 Forecast-Validation for optimal ARCH/GARCH model selection in Python
 
 ## Table of Contents
