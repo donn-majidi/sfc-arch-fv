@@ -17,8 +17,8 @@ This repository develops a forecast validation framework in Python for comparing
 
 ## Installation
 ```bash
-git clone https://github.com/donn-majidi/sfclubunibo-arch-fv.git
-cd sfclubunibo-arch-fv
+git clone https://github.com/donn-majidi/sfc-arch-fv.git
+cd sfc-arch-fv
 python -m venv .venv
 source .venv/bin/activate  # on Windows: .venv\Scripts\activate
 pip install -r requirements.txt
